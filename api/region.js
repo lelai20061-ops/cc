@@ -1,16 +1,8 @@
-const REGION_LOOKUP_BASE =
-  process.env.FF_REGION_LOOKUP_BASE || 'https://ffname.vercel.app';
+const REGION_API = 'https://danger-player-info.vercel.app/region';
+const API_KEY = process.env.DANGER_API_KEY || 'DANGERxINFO';
 
 function validUid(uid) {
   return /^\d{6,20}$/.test(String(uid || ''));
-}
-
-function normalizeRegion(region) {
-  const raw = String(region || '').trim().toUpperCase();
-  const aliasMap = {
-    EUROPE: 'EU'
-  };
-  return aliasMap[raw] || raw;
 }
 
 async function fetchText(url) {
@@ -24,11 +16,11 @@ async function fetchText(url) {
 
   const text = await response.text();
 
-  if (!response.ok) {
-    throw new Error(`Upstream HTTP ${response.status}: ${text.slice(0, 200)}`);
-  }
-
-  return text;
+  return {
+    ok: response.ok,
+    status: response.status,
+    text
+  };
 }
 
 module.exports = async function handler(req, res) {
@@ -41,32 +33,41 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const url = `${REGION_LOOKUP_BASE}/?uid=${encodeURIComponent(uid)}`;
-    const text = await fetchText(url);
+    const url = `${REGION_API}?uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(API_KEY)}`;
+    const upstream = await fetchText(url);
 
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch {
-      return res.status(502).json({
-        error: 'Upstream did not return JSON.',
-        raw: text.slice(0, 300)
+    if (!upstream.ok) {
+      return res.status(upstream.status === 404 ? 404 : 502).json({
+        error: `Upstream HTTP ${upstream.status}`,
+        raw: upstream.text.slice(0, 500)
       });
     }
 
-    if (!data || !data.region || !data.nickname) {
+    let data;
+    try {
+      data = JSON.parse(upstream.text);
+    } catch {
+      return res.status(502).json({
+        error: 'Upstream did not return JSON.',
+        raw: upstream.text.slice(0, 500)
+      });
+    }
+
+    const out = {
+      uid: String(data.uid || data.accountId || uid),
+      nickname: data.nickname || data.playerName || data?.data?.nickname || null,
+      region: data.region || data?.data?.region || null,
+      server: data.server || data.join || data?.data?.server || null
+    };
+
+    if (!out.region && !out.nickname) {
       return res.status(404).json({
-        error: 'Region lookup failed for this UID.',
+        error: 'Region lookup failed.',
         upstream: data
       });
     }
 
-    return res.status(200).json({
-      uid: String(uid),
-      nickname: data.nickname,
-      region: normalizeRegion(data.region),
-      server: data.join || null
-    });
+    return res.status(200).json(out);
   } catch (error) {
     console.error('region.js fatal error:', error);
 

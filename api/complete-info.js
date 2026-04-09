@@ -1,16 +1,8 @@
-const FULL_INFO_BASE =
-  process.env.FF_FULL_INFO_BASE || 'https://danger-player-info.vercel.app/';
+const ACCINFO_API = 'https://danger-player-info.vercel.app/accinfo';
+const API_KEY = process.env.DANGER_API_KEY || 'DANGERxINFO';
 
 function validUid(uid) {
   return /^\d{6,20}$/.test(String(uid || ''));
-}
-
-function normalizeRegion(region) {
-  const raw = String(region || '').trim().toUpperCase();
-  const aliasMap = {
-    EUROPE: 'EU'
-  };
-  return aliasMap[raw] || raw;
 }
 
 async function fetchText(url) {
@@ -34,7 +26,6 @@ async function fetchText(url) {
 module.exports = async function handler(req, res) {
   try {
     const uid = req.query?.uid;
-    const region = normalizeRegion(req.query?.region);
 
     if (!validUid(uid)) {
       return res.status(400).json({
@@ -43,53 +34,65 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    if (!region) {
-      return res.status(400).json({
-        status: 'error',
-        message: 'Thiếu region. Hãy gọi dạng /api/complete-info?uid=2450675101&region=VN'
-      });
-    }
-
-    const infoUrl =
-      `${FULL_INFO_BASE}/player-info?region=${encodeURIComponent(region)}&uid=${encodeURIComponent(uid)}`;
-
-    const upstream = await fetchText(infoUrl);
+    const url = `${ACCINFO_API}?uid=${encodeURIComponent(uid)}&key=${encodeURIComponent(API_KEY)}`;
+    const upstream = await fetchText(url);
 
     if (!upstream.ok) {
       return res.status(upstream.status === 404 ? 404 : 502).json({
         status: 'error',
         message: `Upstream HTTP ${upstream.status}`,
-        raw: upstream.text.slice(0, 500),
-        region
+        raw: upstream.text.slice(0, 500)
       });
     }
 
-    let infoData;
+    let data;
     try {
-      infoData = JSON.parse(upstream.text);
+      data = JSON.parse(upstream.text);
     } catch {
       return res.status(502).json({
         status: 'error',
         message: 'Upstream did not return JSON.',
-        raw: upstream.text.slice(0, 500),
-        region
+        raw: upstream.text.slice(0, 500)
       });
     }
 
-    if (!infoData || !infoData.basicInfo) {
-      return res.status(404).json({
-        status: 'error',
-        message: 'Full account info not found.',
-        upstream: infoData,
-        region
+    const outfitImage =
+      data.outfit_image ||
+      data.outfitImage ||
+      data?.data?.outfit_image ||
+      data?.data?.outfitImage ||
+      null;
+
+    if (data?.status === 'success' && data?.data) {
+      return res.status(200).json({
+        ...data,
+        outfit_image: data.outfit_image || outfitImage || null
+      });
+    }
+
+    if (data?.basicInfo || data?.profileInfo || data?.socialInfo) {
+      return res.status(200).json({
+        status: 'success',
+        region: data?.basicInfo?.region || null,
+        data,
+        outfit_image: outfitImage
+      });
+    }
+
+    if (data?.data && (data.data.basicInfo || data.data.profileInfo || data.data.socialInfo)) {
+      return res.status(200).json({
+        status: 'success',
+        region: data?.data?.basicInfo?.region || null,
+        data: data.data,
+        outfit_image: outfitImage
       });
     }
 
     return res.status(200).json({
       status: 'success',
-      region,
-      data: infoData,
-      outfit_image: null
+      region: data?.region || null,
+      data,
+      outfit_image: outfitImage
     });
   } catch (error) {
     console.error('complete-info.js fatal error:', error);

@@ -1,5 +1,5 @@
 const FULL_INFO_BASE =
-  process.env.FF_FULL_INFO_BASE || 'https://ffdvinh09-info.vercel.app';
+  process.env.FF_FULL_INFO_BASE || 'https://danger-player-info.vercel.app/';
 
 function validUid(uid) {
   return /^\d{6,20}$/.test(String(uid || ''));

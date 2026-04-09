@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danger Style Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --primary:#ff4444;--primary-dark:#cc0000;--accent:#ffaa00;--bg:#0f0f23;--card:rgba(26,26,46,.92);--text:#fff;--muted:#b8bfd1;--glass:rgba(255,255,255,.08);
+    }
+    body{font-family:Rajdhani,sans-serif;background:radial-gradient(circle at top,#1b1b3a 0%,#0f0f23 50%,#090913 100%);color:var(--text);min-height:100vh;padding:24px}
+    .container{max-width:1280px;margin:0 auto}
+    .header,.card,.tabs{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--glass);border-radius:24px;box-shadow:0 10px 40px rgba(0,0,0,.25)}
+    .header{padding:36px 24px;text-align:center;margin-bottom:24px}
+    .brand{font-family:Orbitron,sans-serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:900;background:linear-gradient(45deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{margin-top:8px;color:var(--muted);font-size:1.15rem}
+    .tabs{display:flex;gap:12px;padding:12px;margin-bottom:24px}
+    .tab{flex:1;padding:16px 18px;border:none;border-radius:16px;background:transparent;color:var(--text);font:700 1rem Orbitron,sans-serif;cursor:pointer}
+    .tab.active{background:linear-gradient(135deg,var(--primary),var(--primary-dark))}
+    .grid{display:grid;grid-template-columns:1fr;gap:24px}
+    @media(min-width:1100px){.grid{grid-template-columns:1fr 1fr}}
+    .card{padding:24px;position:relative}
+    .badge{position:absolute;right:16px;top:16px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:6px 12px;border-radius:999px;font:700 .75rem Orbitron,sans-serif}
+    .card h2{font-family:Orbitron,sans-serif;margin-bottom:8px;font-size:1.7rem}
+    .muted{color:var(--muted)}
+    .field{margin-top:18px}
+    label{display:block;margin-bottom:8px;color:var(--muted);font-weight:700}
+    input{width:100%;padding:16px;border-radius:14px;border:1px solid var(--glass);background:rgba(0,0,0,.25);color:#fff;font-size:1rem}
+    .bg-choices{display:flex;gap:10px;margin-top:10px}
+    .bg-btn{width:42px;height:42px;border-radius:12px;border:2px solid transparent;cursor:pointer}
+    .bg-btn.active{outline:2px solid #fff}
+    .bg1{background:linear-gradient(135deg,#ff4444,#830000)}
+    .bg2{background:linear-gradient(135deg,#28a745,#0a5120)}
+    .bg3{background:linear-gradient(135deg,#007bff,#06295a)}
+    button.primary{margin-top:22px;width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;font:700 1rem Orbitron,sans-serif;cursor:pointer}
+    .hidden{display:none}
+    .result-section{margin-top:18px}
+    .section-title{font-family:Orbitron,sans-serif;color:var(--accent);margin:18px 0 12px}
+    .info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+    .info-item,.stat{background:rgba(255,255,255,.05);padding:16px;border-radius:16px;border-left:4px solid var(--primary)}
+    .label{font-size:.9rem;color:var(--muted);text-transform:uppercase}
+    .value{font-size:1.15rem;font-weight:700;margin-top:6px;word-break:break-word}
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+    .stat{text-align:center;border-left:none}
+    .stat .value{font-size:1.8rem}
+    .message{padding:14px 16px;border-radius:14px;margin-top:16px;font-weight:700}
+    .ok{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.4);color:#7fffc4}
+    .err{background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.4);color:#ff9c9c}
+    .outfit{margin-top:16px;text-align:center;background:rgba(255,255,255,.04);padding:16px;border-radius:18px}
+    .outfit img{max-width:100%;max-height:500px;border-radius:14px;border:2px solid var(--primary)}
+    .footer{margin-top:24px;text-align:center;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">🔥 DANGER STYLE</div>
+      <div class="tagline">Safe demo full-stack app with frontend + backend</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="full">👤 Full Info & Outfit</button>
+      <button class="tab" data-tab="region">🌍 Region Check</button>
+    </div>
+
+    <div id="fullTab" class="grid">
+      <div class="card">
+        <div class="badge">LIVE</div>
+        <h2>Player Search</h2>
+        <div class="muted">Enter a UID to fetch demo account data.</div>
+
+        <div class="field">
+          <label for="uid">UID</label>
+          <input id="uid" placeholder="Enter UID, e.g. 2450675101" />
+        </div>
+
+        <div class="field">
+          <label>Outfit background</label>
+          <div class="bg-choices">
+            <div class="bg-btn bg1 active" data-bg="1"></div>
+            <div class="bg-btn bg2" data-bg="2"></div>
+            <div class="bg-btn bg3" data-bg="3"></div>
+          </div>
+        </div>
+
+        <button id="fetchFull" class="primary">GET ACCOUNT INFO & OUTFIT</button>
+        <div id="fullMessage"></div>
+      </div>
+
+      <div class="card">
+        <div class="badge">RESULTS</div>
+        <h2>Account Information</h2>
+        <div class="muted">Detailed player stats and generated outfit.</div>
+        <div id="fullResults" class="result-section hidden"></div>
+      </div>
+    </div>
+
+    <div id="regionTab" class="grid hidden">
+      <div class="card">
+        <div class="badge">FAST</div>
+        <h2>Region Check</h2>
+        <div class="muted">Quick region lookup.</div>
+        <div class="field">
+          <label for="regionUid">UID</label>
+          <input id="regionUid" placeholder="Enter UID" />
+        </div>
+        <button id="fetchRegion" class="primary">CHECK PLAYER REGION</button>
+        <div id="regionMessage"></div>
+      </div>
+
+      <div class="card">
+        <div class="badge">REGION</div>
+        <h2>Region Information</h2>
+        <div class="muted">Basic region and nickname details.</div>
+        <div id="regionResults" class="result-section hidden"></div>
+      </div>
+    </div>
+
+    <div class="footer">This starter is safe by default. Replace the provider layer only if you have a legitimate API/data source.</div>
+  </div>
+
+<script>
+  const tabs = document.querySelectorAll('.tab');
+  const fullTab = document.getElementById('fullTab');
+  const regionTab = document.getElementById('regionTab');
+
+  tabs.forEach(btn => btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const isFull = btn.dataset.tab === 'full';
+    fullTab.classList.toggle('hidden', !isFull);
+    regionTab.classList.toggle('hidden', isFull);
+  }));
+
+  let selectedBg = '1';
+  document.querySelectorAll('.bg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.bg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedBg = btn.dataset.bg;
+    });
+  });
+
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s ?? '';
+    return d.innerHTML;
+  }
+
+  function fmt(ts) {
+    const d = new Date((Number(ts) || 0) * 1000);
+    return isNaN(d.getTime()) ? 'Unknown' : d.toLocaleString();
+  }
+
+  function num(n) {
+    return Number(n || 0).toLocaleString();
+  }
+
+  function item(label, value) {
+    return '<div class="info-item"><div class="label">' + label + '</div><div class="value">' + value + '</div></div>';
+  }
+
+  function stat(label, value) {
+    return '<div class="stat"><div class="label">' + label + '</div><div class="value">' + value + '</div></div>';
+  }
+
+  function validUid(uid) {
+    return /^\d{6,20}$/.test(String(uid || '').trim());
+  }
+
+  function calculateCSRank(stars) {
+    stars = parseInt(stars || 0, 10);
+    if (stars >= 187) return `Elite Master – ${stars - 87 + 1}★`;
+    if (stars >= 137) return `Master – ${stars - 87 + 1}★`;
+    if (stars >= 112) return `Elite Heroic – ${stars - 87 + 1}★`;
+    if (stars >= 87) return `Heroic – ${stars - 87 + 1}★`;
+    if (stars >= 82) return `Diamond V – ${stars - 82 + 1}★`;
+    if (stars >= 77) return `Diamond IV – ${stars - 77 + 1}★`;
+    if (stars >= 72) return `Diamond III – ${stars - 72 + 1}★`;
+    if (stars >= 67) return `Diamond II – ${stars - 67 + 1}★`;
+    if (stars >= 62) return `Diamond I – ${stars - 62 + 1}★`;
+    if (stars >= 57) return `Platinum V – ${stars - 57 + 1}★`;
+    if (stars >= 52) return `Platinum IV – ${stars - 52 + 1}★`;
+    if (stars >= 47) return `Platinum III – ${stars - 47 + 1}★`;
+    if (stars >= 42) return `Platinum II – ${stars - 42 + 1}★`;
+    if (stars >= 37) return `Platinum I – ${stars - 37 + 1}★`;
+    if (stars >= 33) return `Gold IV – ${stars - 33 + 1}★`;
+    if (stars >= 29) return `Gold III – ${stars - 29 + 1}★`;
+    if (stars >= 25) return `Gold II – ${stars - 25 + 1}★`;
+    if (stars >= 21) return `Gold I – ${stars - 21 + 1}★`;
+    if (stars >= 17) return `Silver III – ${stars - 17 + 1}★`;
+    if (stars >= 13) return `Silver II – ${stars - 13 + 1}★`;
+    if (stars >= 9) return `Silver I – ${stars - 9 + 1}★`;
+    if (stars >= 6) return `Bronze III – ${stars - 6 + 1}★`;
+    if (stars >= 3) return `Bronze II – ${stars - 3 + 1}★`;
+    return `Bronze I – ${stars + 1}★`;
+  }
+
+  function calculateBRRank(points) {
+    points = parseInt(points || 0, 10);
+    if (points >= 10000) return 'Elite Master V';
+    if (points >= 9000) return 'Elite Master IV';
+    if (points >= 8000) return 'Elite Master III';
+    if (points >= 7100) return 'Master II';
+    if (points >= 6300) return 'Master I';
+    if (points >= 5500) return 'Elite Heroic V';
+    if (points >= 4900) return 'Elite Heroic IV';
+    if (points >= 4300) return 'Elite Heroic III';
+    if (points >= 3800) return 'Heroic II';
+    if (points >= 3500) return 'Heroic I';
+    if (points >= 2750) return 'Diamond';
+    if (points >= 2000) return 'Platinum';
+    if (points >= 1600) return 'Gold';
+    if (points >= 1300) return 'Silver';
+    if (points >= 1000) return 'Bronze';
+    return 'Unranked';
+  }
+
+  async function fetchJson(url) {
+    const r = await fetch(url);
+    const text = await r.text();
+    let data = {};
+
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch {
+      throw new Error('API không trả JSON. Có thể route backend đang lỗi hoặc 404.');
+    }
+
+    if (!r.ok) {
+      throw new Error(data.error || data.message || ('HTTP ' + r.status));
+    }
+
+    return data;
+  }
+
+  async function lookupRegion(uid) {
+    return fetchJson('/api/region?uid=' + encodeURIComponent(uid));
+  }
+
+  function buildOutfitSrc(outfitImage) {
+    if (!outfitImage) return null;
+    if (String(outfitImage).startsWith('data:image/')) return outfitImage;
+    return 'data:image/png;base64,' + outfitImage;
+  }
+
+  document.getElementById('fetchFull').addEventListener('click', async () => {
+    const uid = document.getElementById('uid').value.trim();
+    const msg = document.getElementById('fullMessage');
+    const box = document.getElementById('fullResults');
+
+    if (!validUid(uid)) {
+      msg.innerHTML = '<div class="message err">UID phải là 6-20 chữ số.</div>';
+      box.classList.add('hidden');
+      return;
+    }
+
+    msg.innerHTML = '<div class="message ok">Đang dò region và lấy full info...</div>';
+    box.classList.add('hidden');
+
+    try {
+      const regionData = await lookupRegion(uid);
+      const region = regionData.region;
+
+      const fullData = await fetchJson(
+        '/api/complete-info?uid=' +
+        encodeURIComponent(uid) +
+        '&region=' + encodeURIComponent(region) +
+        '&bg=' + encodeURIComponent(selectedBg)
+      );
+
+      if (fullData.status !== 'success') {
+        throw new Error(fullData.message || 'Failed to fetch account info');
+      }
+
+      const payload = fullData.data || {};
+      const b = payload.basicInfo || {};
+      const s = payload.socialInfo || {};
+      const c = payload.clanBasicInfo || {};
+      const p = payload.petInfo || {};
+      const cr = payload.creditScoreInfo || {};
+      const cap = payload.captainBasicInfo || {};
+
+      const brRank = calculateBRRank(b.rankingPoints);
+      const csRank = calculateCSRank(b.csRankingPoints);
+      const outfitSrc = buildOutfitSrc(fullData.outfit_image);
+
+      box.innerHTML =
+        '<div class="message ok">Player found.</div>' +
+        '<div class="section-title">Player Information</div>' +
+        '<div class="info-grid">' +
+          item('Player Name', esc(b.nickname || regionData.nickname || 'N/A')) +
+          item('UID', esc(b.accountId || uid)) +
+          item('Region', esc(b.region || fullData.region || region || 'N/A')) +
+          item('Level', esc(String(b.level || 0))) +
+        '</div>' +
+        '<div class="section-title">Timeline</div>' +
+        '<div class="info-grid">' +
+          item('Account Created', esc(fmt(b.createAt))) +
+          item('Last Login', esc(fmt(b.lastLoginAt))) +
+        '</div>' +
+        '<div class="section-title">Rank Information</div>' +
+        '<div class="info-grid">' +
+          item('BR Rank', esc(brRank + ' (' + num(b.rankingPoints) + ' pts)')) +
+          item('CS Rank', esc(csRank + ' (' + num(b.csRankingPoints) + ' stars)')) +
+        '</div>' +
+        (c.clanName ? (
+          '<div class="section-title">Guild</div>' +
+          '<div class="info-grid">' +
+            item('Guild Name', esc(c.clanName)) +
+            item('Guild ID', esc(c.clanId || 'N/A')) +
+            item('Guild Level', esc(String(c.clanLevel || 0))) +
+            item('Members', esc((c.memberNum || 0) + '/' + (c.capacity || 0))) +
+          '</div>'
+        ) : '') +
+        (cap.nickname ? (
+          '<div class="section-title">Guild Leader</div>' +
+          '<div class="info-grid">' +
+            item('Leader Name', esc(cap.nickname)) +
+            item('Leader UID', esc(cap.accountId || 'N/A')) +
+            item('Leader Level', esc(String(cap.level || 0))) +
+          '</div>'
+        ) : '') +
+        '<div class="section-title">Statistics</div>' +
+        '<div class="stats">' +
+          stat('Likes', num(b.liked)) +
+          stat('Experience', num(b.exp)) +
+          stat('Honor', esc(String(cr.creditScore || 100))) +
+          stat('Pet Level', esc(String(p.level || 0))) +
+        '</div>' +
+        (s.signature
+          ? '<div class="section-title">Signature</div><div class="info-item"><div class="value">' + esc(s.signature) + '</div></div>'
+          : '') +
+        (outfitSrc
+          ? '<div class="outfit"><div class="section-title">Generated Outfit</div><img alt="outfit" src="' + outfitSrc + '" /></div>'
+          : '');
+
+      box.classList.remove('hidden');
+      msg.innerHTML = '';
+    } catch (e) {
+      msg.innerHTML = '<div class="message err">' + esc(e.message) + '</div>';
+    }
+  });
+
+  document.getElementById('fetchRegion').addEventListener('click', async () => {
+    const uid = document.getElementById('regionUid').value.trim();
+    const msg = document.getElementById('regionMessage');
+    const box = document.getElementById('regionResults');
+
+    if (!validUid(uid)) {
+      msg.innerHTML = '<div class="message err">UID phải là 6-20 chữ số.</div>';
+      box.classList.add('hidden');
+      return;
+    }
+
+    msg.innerHTML = '<div class="message ok">Loading...</div>';
+    box.classList.add('hidden');
+
+    try {
+      const data = await lookupRegion(uid);
+
+      box.innerHTML =
+        '<div class="message ok">Region found.</div>' +
+        '<div class="info-grid">' +
+          item('UID', esc(data.uid)) +
+          item('Player Name', esc(data.nickname)) +
+          item('Region', esc(data.region)) +
+          item('Server', esc(data.server || 'N/A')) +
+        '</div>';
+
+      box.classList.remove('hidden');
+      msg.innerHTML = '';
+    } catch (e) {
+      msg.innerHTML = '<div class="message err">' + esc(e.message) + '</div>';
+    }
+  });
+</script>
+</body>
+</html>

@@ -15,8 +15,9 @@ function normalizeRegion(region) {
 
 async function fetchText(url) {
   const response = await fetch(url, {
+    method: 'GET',
     headers: {
-      'accept': 'application/json,text/plain,*/*',
+      accept: 'application/json,text/plain,*/*',
       'user-agent': 'Mozilla/5.0'
     }
   });
@@ -30,9 +31,9 @@ async function fetchText(url) {
   return text;
 }
 
-module.exports = async (req, res) => {
+module.exports = async function handler(req, res) {
   try {
-    const { uid } = req.query;
+    const uid = req.query?.uid;
 
     if (!validUid(uid)) {
       return res.status(400).json({
@@ -67,6 +68,8 @@ module.exports = async (req, res) => {
       server: data.join || null
     });
   } catch (error) {
+    console.error('region.js fatal error:', error);
+
     return res.status(500).json({
       error: error.message || 'Failed to fetch region info.'
     });
